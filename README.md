@@ -120,8 +120,6 @@ project/
 │   ├── api/
 │   ├── core/
 │   ├── models/
-│   ├── workers/
-│   ├── utils/
 │   └── main.py
 ├── celery_worker/
 ├── docker-compose.yml
