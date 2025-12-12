@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  fastapi_app:
+    build: .
+    volumes:
+      - ./uploads:/app/uploads    
+      - ./data:/app/data                  
+      - ./ocr_tasks.db:/app/ocr_tasks.db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    command: bash -c "export PYTHONPATH=/app && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  celery_worker:
+    build: .
+    volumes:
+      - ./uploads:/app/uploads    
+      - ./data:/app/data                  
+      - ./ocr_tasks.db:/app/ocr_tasks.db
+    depends_on:
+      - redis
+    command: bash -c "export PYTHONPATH=/app && celery -A app.celery_worker.celery worker --loglevel=info --pool=solo"

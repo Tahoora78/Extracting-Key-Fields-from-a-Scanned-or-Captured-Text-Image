@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+sqlalchemy
+databases
+python-multipart
+pillow
+pytesseract
+celery[redis]
+redis

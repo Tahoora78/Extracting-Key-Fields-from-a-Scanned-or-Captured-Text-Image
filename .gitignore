@@ -1,0 +1,67 @@
+# ------------------------
+# Python
+# ------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+
+# Virtual environment
+venv/
+.env/
+.env.*
+
+
+# ------------------------
+# FastAPI / Celery
+# ------------------------
+# Uploads folder (user-uploaded files)
+uploads/
+
+# Celery beat schedule
+celerybeat-schedule
+celerybeat.pid
+
+# Celery logs
+celery.log
+
+
+# ------------------------
+# SQLite Database
+# ------------------------
+*.db
+data/
+!data/.gitkeep   # keep folder structure if you want
+
+
+# ------------------------
+# OS / Editor files
+# ------------------------
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+
+# ------------------------
+# Docker
+# ------------------------
+# Avoid committing local docker volumes
+*.pid
+docker-compose.override.yml
+docker-data/
+docker-logs/
