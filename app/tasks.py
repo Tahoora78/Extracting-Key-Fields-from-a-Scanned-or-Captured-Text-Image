@@ -15,7 +15,7 @@ def process_image(task_id: int):
         db.close()
         return
 
-    file_path = task.filename  # keep reference
+    file_path = task.filename 
 
     try:
         img = Image.open(file_path)
