@@ -1,3 +1,4 @@
+import os
 from .celery_worker import celery
 from .database import SessionLocal
 from .models import OCRTask
@@ -11,10 +12,13 @@ def process_image(task_id: int):
     db = SessionLocal()
     task = db.query(OCRTask).filter(OCRTask.id == task_id).first()
     if not task:
+        db.close()
         return
-    
+
+    file_path = task.filename  # keep reference
+
     try:
-        img = Image.open(task.filename)
+        img = Image.open(file_path)
         text = pytesseract.image_to_string(img)
 
         lines = [line.strip() for line in text.split("\n") if line.strip()]
@@ -40,15 +44,15 @@ def process_image(task_id: int):
                 code = m.group(0)
                 break
 
-        candidates = []
-        for line in lines:
-            if not date_pattern.search(line) and not code_pattern.search(line):
-                if re.search(r"[A-Za-z]", line): 
-                    candidates.append(line)
+        candidates = [
+            line for line in lines
+            if re.search(r"[A-Za-z]", line)
+            and not date_pattern.search(line)
+            and not code_pattern.search(line)
+        ]
 
         if candidates:
             title = max(candidates, key=len)
-
 
         task.title = title
         task.code = code
@@ -63,6 +67,13 @@ def process_image(task_id: int):
     except Exception as e:
         task.status = "failed"
         task.error = str(e)
-    
-    db.commit()
-    db.close()
+
+    finally:
+        try:
+            if file_path and os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as delete_error:
+            print(f"Failed to delete file {file_path}: {delete_error}")
+
+        db.commit()
+        db.close()
